@@ -1,0 +1,22 @@
+{
+  "name": "cypress_demo",
+  "version": "1.0.0",
+  "description": "Playground of Cypress",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/navvro/cypress_demo.git"
+  },
+  "author": "Rafal Nawrocki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/navvro/cypress_demo/issues"
+  },
+  "homepage": "https://github.com/navvro/cypress_demo#readme",
+  "devDependencies": {
+    "cypress": "^11.0.1"
+  }
+}
