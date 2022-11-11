@@ -31,6 +31,19 @@ describe('front end checklist', () => {
     it('has declared correct viewport', () => {
         cy.get('head meta[name=viewport]')
             .should('have.attr', 'content', 'width=device-width, initial-scale=1'
-        )
+            )
     })
+
+    it('title has less than 55 chars', () => {
+        cy.title().then(title => {
+            expect(title.length).to.be.lessThan(55)
+        })
+    })
+
+    it('has declared description properly', () => {
+        cy.get('[name = "description"]', {timeout: 100})
+            .should('exist')
+    })
+
+
 })
