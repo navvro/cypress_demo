@@ -5,59 +5,70 @@ on: [ push ]
 jobs:
   install:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node18.12.0-chrome106-ff106
+    container:
+      image: cypress/browsers:node18.12.0-chrome106-ff106
+      options: --user 1001
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Cypress install
-        uses: cypress-io/github-action@v4.2.0 # use the explicit version number
+        uses: cypress-io/github-action@v4
         with:
-          # Disable running of tests within install job
           runTests: false
-          build: yarn build
+      # report machine parameters
+      - run: yarn cypress info
+      - run: node --version
+      - run: node -p 'os.cpus()'
+      - run: yarn types
+      - run: yarn lint
+      - run: yarn test:unit:ci
+      - run: yarn build:ci
 
-      - name: Save built folders
-        uses: actions/upload-artifact@v2
-        with:
-          name: built
-          path: |
-            public
-
-  ui-chrome-tests:
-    runs-on: ubuntu-latest
-    container: cypress/browsers:node18.12.0-chrome106-ff106
-    needs: install
-    strategy:
-      fail-fast: false
-      matrix:
-        # run copies of the current job in parallel
-        containers: [ 1, 2, 3, 4, 5 ]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Download the build folders
-        uses: actions/download-artifact@v2
+      - name: Save build folder
+        uses: actions/upload-artifact@v3
         with:
           name: build
+          if-no-files-found: error
           path: build
 
-      - name: 'UI Tests - Chrome'
-        uses: cypress-io/github-action@v4.2.0 # use the explicit version number
-        with:
-          # we have already installed all dependencies above
-          install: false
-          start: yarn start:ci
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
-          browser: chrome
-          record: true
-          parallel: true
-          group: 'UI - Chrome'
-          spec: cypress/e2e/*
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Recommended: pass the GitHub token lets this action correctly
-          # determine the unique run id necessary to re-run the checks
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    ui-chrome-tests:
+      runs-on: ubuntu-latest
+      container:
+        image: cypress/browsers:node18.12.0-chrome106-ff106
+        options: --user 1001
+      needs: install
+      strategy:
+        fail-fast: false
+        matrix:
+          # run copies of the current job in parallel
+          containers: [ 1, 2, 3, 4, 5 ]
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Download the build folders
+          uses: actions/download-artifact@v2
+          with:
+            name: build
+            path: build
+
+        - name: 'UI Tests - Chrome'
+          uses: cypress-io/github-action@v4.2.0 # use the explicit version number
+          with:
+            # we have already installed all dependencies above
+            install: false
+            start: yarn start:ci
+            wait-on: 'http://localhost:3000'
+            wait-on-timeout: 120
+            browser: chrome
+            record: true
+            parallel: true
+            group: 'UI - Chrome'
+            spec: cypress/e2e/*
+          env:
+            CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+            # Recommended: pass the GitHub token lets this action correctly
+            # determine the unique run id necessary to re-run the checks
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
