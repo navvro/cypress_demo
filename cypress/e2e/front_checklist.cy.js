@@ -1,5 +1,5 @@
 /**
- * Tests on base of front end app checklist from
+ * Some static tests on base of front end app checklist from
  * https://github.com/thedaviddias/Front-End-Checklist/
  */
 
@@ -45,5 +45,24 @@ describe('front end checklist', () => {
             .should('exist')
     })
 
+    it('has rel canonical set', () => {
+        cy.get('[rel = "canonical"]').should('exist')
+    })
 
+    it('has declared lang attribute', () => {
+        cy.get('html').should("have.attr", 'lang', 'en-US')
+    })
+
+    it('has 404 error page', () => {
+        cy.visit('/sdfsreferferfer', {failOnStatusCode: false})
+
+        cy.get('h1').contains('Oops! That page can’t be found.').should('be.visible')
+    })
+
+    it('has working all links on main page', () => {
+        cy.get('a').each($a => {
+            const message = $a.text()
+            expect($a, message).to.have.attr('href').not.contain('undefined')
+        })
+    })
 })
