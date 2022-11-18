@@ -20,11 +20,8 @@ jobs:
           # we have already installed all dependencies above
           install: true
           start: yarn start:ci
-          wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
           browser: chrome
           record: true
-          parallel: true
           group: 'UI - Chrome'
           spec: cypress/e2e/*
         env:
