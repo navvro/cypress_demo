@@ -17,12 +17,12 @@ jobs:
           runTests: false
           build: yarn build
 
-      - name: Save build folder
+      - name: Save built folders
         uses: actions/upload-artifact@v2
         with:
-          name: build
-          if-no-files-found: error
-          path: build
+          name: built
+          path: |
+            public
 
   ui-chrome-tests:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
           record: true
           parallel: true
           group: 'UI - Chrome'
-          spec: cypress/tests/ui/*
+          spec: cypress/e2e/*
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # Recommended: pass the GitHub token lets this action correctly
