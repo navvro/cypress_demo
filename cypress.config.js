@@ -1,6 +1,7 @@
 const { defineConfig } = require('cypress')
 
 module.exports = defineConfig({
+  projectId: 'hp9gto',
   watchForFileChanges: false,
   e2e: {
     baseUrl: 'http://skleptest.pl/',
