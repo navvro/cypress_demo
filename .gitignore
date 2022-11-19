@@ -1,1 +1,4 @@
 node_modules
+.idea
+/cypress/screenshots/front_checklist.cy.js/
+/cypress/videos/
